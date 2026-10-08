@@ -1,0 +1,2202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freshdesk · Collaborator Dashboard</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23101828'/><text x='50' y='66' font-size='44' font-family='Arial' font-weight='700' fill='white' text-anchor='middle'>FD</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #F6F7F9;
+            --surface: #FFFFFF;
+            --border: #E4E7EB;
+            --border-2: #D3D7DD;
+            --text: #14181F;
+            --text-2: #5B6472;
+            --text-3: #9098A3;
+            --accent: #2563EB;
+            --accent-h: #1D4ED8;
+            --accent-soft: #EDF3FF;
+            --green: #15803D;
+            --green-btn: #16A34A;
+            --green-soft: #E9F7EE;
+            --red: #DC2626;
+            --amber: #B45309;
+            --amber-soft: #FCF3E2;
+            --radius: 10px;
+            --mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        [hidden] {
+            display: none !important
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 14px;
+            line-height: 1.45;
+            -webkit-font-smoothing: antialiased
+        }
+
+        .wrap {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 28px 28px 48px
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 12px;
+            flex-wrap: wrap
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .brand-mark {
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
+            background: #101828;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px
+        }
+
+        .brand-title {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: -.01em
+        }
+
+        .brand-sub {
+            font-size: 12px;
+            color: var(--text-2);
+            margin-top: 1px
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 5px 12px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: var(--surface);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-2)
+        }
+
+        .badge .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #ADB5BD
+        }
+
+        .badge.live {
+            color: var(--green);
+            border-color: #BBE3C8;
+            background: var(--green-soft)
+        }
+
+        .badge.live .dot {
+            background: var(--green-btn);
+            animation: pulse 1.8s ease-out infinite
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(22, 163, 74, .4)
+            }
+
+            70% {
+                box-shadow: 0 0 0 6px rgba(22, 163, 74, 0)
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(22, 163, 74, 0)
+            }
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: 0 1px 2px rgba(16, 24, 40, .04)
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 16px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .15s, border-color .15s, color .15s, transform .05s;
+            white-space: nowrap
+        }
+
+        .btn:active {
+            transform: translateY(1px)
+        }
+
+        .btn:disabled {
+            opacity: .55;
+            cursor: not-allowed;
+            transform: none
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-h)
+        }
+
+        .btn-outline {
+            background: var(--surface);
+            border-color: var(--border-2);
+            color: var(--text)
+        }
+
+        .btn-outline:hover {
+            background: #F5F6F8
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-2)
+        }
+
+        .btn-ghost:hover {
+            background: #F0F2F4;
+            color: var(--text)
+        }
+
+        .btn-start {
+            background: var(--green-btn);
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 13.5px
+        }
+
+        .btn-start:hover {
+            background: #128A40
+        }
+
+        .btn-stop {
+            background: var(--red);
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 13.5px
+        }
+
+        .btn-stop:hover {
+            background: #B91C1C
+        }
+
+        .btn-cancel {
+            background: var(--surface);
+            border-color: #F3B4B4;
+            color: var(--red);
+            padding: 10px 20px;
+            font-size: 13.5px
+        }
+
+        .btn-cancel:hover {
+            background: #FEF5F5
+        }
+
+        .icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text-2);
+            cursor: pointer;
+            transition: all .15s
+        }
+
+        .icon-btn:hover {
+            background: #F3F5F7;
+            color: var(--text);
+            border-color: var(--border-2)
+        }
+
+        .select,
+        .input {
+            font-family: inherit;
+            font-size: 13px;
+            color: var(--text);
+            background: var(--surface);
+            border: 1px solid var(--border-2);
+            border-radius: 8px;
+            padding: 8px 10px;
+            outline: none;
+            transition: border-color .15s, box-shadow .15s
+        }
+
+        .select:focus,
+        .input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-soft)
+        }
+
+        .select {
+            appearance: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+            padding-right: 30px;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235B6472' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 9px center;
+            background-size: 13px
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 18px;
+            margin-bottom: 18px;
+            flex-wrap: wrap
+        }
+
+        .controls-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap
+        }
+
+        .interval {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--text-2);
+            font-size: 12.5px;
+            font-weight: 500
+        }
+
+        .vr {
+            width: 1px;
+            height: 26px;
+            background: var(--border);
+            margin: 0 4px
+        }
+
+        .controls-right {
+            text-align: right
+        }
+
+        .meta-line {
+            font-size: 12.5px;
+            color: var(--text-2);
+            font-weight: 500
+        }
+
+        .meta-line+.meta-line {
+            margin-top: 2px
+        }
+
+        .meta-line.dim {
+            color: var(--text-3);
+            font-family: var(--mono);
+            font-size: 11.5px
+        }
+
+        .meta-line.loading {
+            color: var(--accent)
+        }
+
+        .kpis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 18px
+        }
+
+        .kpi {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 16px 13px
+        }
+
+        .kpi-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--text-3);
+            margin-bottom: 6px
+        }
+
+        .kpi-value {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -.02em;
+            font-variant-numeric: tabular-nums
+        }
+
+        .kpi-sub {
+            font-size: 12px;
+            color: var(--text-2);
+            margin-top: 3px
+        }
+
+        .panels {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 18px
+        }
+
+        .panel {
+            padding: 16px 18px 10px
+        }
+
+        .panel-title {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 10px
+        }
+
+        .dist-row {
+            display: grid;
+            grid-template-columns: minmax(120px, 160px) 40px 1fr 40px;
+            gap: 10px;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px dashed #F0F1F4
+        }
+
+        .dist-row:last-child {
+            border-bottom: none
+        }
+
+        .dist-name {
+            font-size: 12.5px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap
+        }
+
+        .sdot {
+            width: 8px;
+            height: 8px;
+            border-radius: 3px;
+            flex: none
+        }
+
+        .dist-count {
+            font-size: 13px;
+            font-weight: 700;
+            text-align: right;
+            font-variant-numeric: tabular-nums
+        }
+
+        .dist-pct {
+            font-size: 11.5px;
+            color: var(--text-3);
+            text-align: right;
+            font-variant-numeric: tabular-nums
+        }
+
+        .bar {
+            height: 8px;
+            background: #F0F2F4;
+            border-radius: 99px;
+            overflow: hidden
+        }
+
+        .bar i {
+            display: block;
+            height: 100%;
+            border-radius: 99px;
+            transition: width .4s ease
+        }
+
+        .dist-empty {
+            padding: 18px 0;
+            font-size: 12.5px;
+            color: var(--text-3)
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap
+        }
+
+        .st-open {
+            background: #E8F0FE;
+            color: #1D4ED8
+        }
+
+        .st-pending {
+            background: var(--amber-soft);
+            color: #A16207
+        }
+
+        .st-resolved {
+            background: var(--green-soft);
+            color: #15803D
+        }
+
+        .st-closed {
+            background: #EDEFF3;
+            color: #4B5563
+        }
+
+        .st-waitcust {
+            background: #FDEEE0;
+            color: #C2410C
+        }
+
+        .st-waitkam {
+            background: #DFF3F7;
+            color: #0E7490
+        }
+
+        .st-supply {
+            background: #EEF1F5;
+            color: #475569
+        }
+
+        .st-other {
+            background: #F3F4F6;
+            color: #6B7280
+        }
+
+        .chip {
+            display: inline-block;
+            padding: 2px 7px;
+            border-radius: 6px;
+            font-size: 10.5px;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums
+        }
+
+        .chip-p1 {
+            background: #FCE9E9;
+            color: #C0362C
+        }
+
+        .chip-p2 {
+            background: #FCEFDD;
+            color: #B45309
+        }
+
+        .chip-p3 {
+            background: #E8F0FE;
+            color: #1D4ED8
+        }
+
+        .chip-p4 {
+            background: #EEF1F4;
+            color: #5B6472
+        }
+
+        .table-card {
+            overflow: hidden
+        }
+
+        .filters {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            background: #FBFCFD
+        }
+
+        .search {
+            position: relative;
+            flex: 1 1 220px;
+            max-width: 340px
+        }
+
+        .search svg {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-3);
+            pointer-events: none
+        }
+
+        .search .input {
+            width: 100%;
+            padding-left: 32px
+        }
+
+        .filters .select {
+            font-size: 12.5px;
+            padding: 7px 26px 7px 9px
+        }
+
+        .filters .input[type=date] {
+            width: 138px;
+            font-size: 12.5px;
+            padding: 7px 9px
+        }
+
+        .date-range {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-3)
+        }
+
+        .result-count {
+            margin-left: auto;
+            font-size: 12px;
+            color: var(--text-3);
+            font-variant-numeric: tabular-nums
+        }
+
+        .table-wrap {
+            overflow: auto;
+            max-height: 660px
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            min-width: 980px
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background: var(--surface);
+            font-size: 10.5px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--text-2);
+            font-weight: 600;
+            text-align: left;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap
+        }
+
+        thead th[data-sort] {
+            cursor: pointer;
+            user-select: none
+        }
+
+        thead th[data-sort]:hover {
+            color: var(--text)
+        }
+
+        th[data-dir=asc]::after {
+            content: " ↑";
+            color: var(--accent)
+        }
+
+        th[data-dir=desc]::after {
+            content: " ↓";
+            color: var(--accent)
+        }
+
+        th.num,
+        td.num {
+            text-align: right
+        }
+
+        tbody td {
+            padding: 9px 14px;
+            border-bottom: 1px solid #F1F2F4;
+            vertical-align: middle
+        }
+
+        tbody tr:hover {
+            background: #FAFBFC
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none
+        }
+
+        .subj {
+            max-width: 380px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap
+        }
+
+        .nowrap {
+            white-space: nowrap
+        }
+
+        td.dim {
+            color: var(--text-3)
+        }
+
+        .ticket-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-family: var(--mono);
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--accent);
+            text-decoration: none
+        }
+
+        .ticket-link:hover {
+            text-decoration: underline
+        }
+
+        .ticket-link svg {
+            opacity: .6
+        }
+
+        .type-name {
+            font-size: 12.5px;
+            color: var(--text-2)
+        }
+
+        .dur {
+            font-variant-numeric: tabular-nums;
+            font-size: 12.5px
+        }
+
+        .agent-input {
+            width: 78px;
+            padding: 5px 8px;
+            font-size: 12.5px;
+            text-align: right;
+            font-variant-numeric: tabular-nums
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 16px;
+            border-top: 1px solid var(--border);
+            background: #FBFCFD;
+            flex-wrap: wrap;
+            gap: 10px
+        }
+
+        .page-size {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-2)
+        }
+
+        .page-size .select {
+            padding: 5px 26px 5px 8px;
+            font-size: 12px
+        }
+
+        .pager {
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .pager .btn {
+            padding: 6px 12px;
+            font-size: 12px
+        }
+
+        #pageInfo {
+            font-size: 12px;
+            color: var(--text-2);
+            font-variant-numeric: tabular-nums
+        }
+
+        .empty {
+            padding: 64px 24px;
+            text-align: center
+        }
+
+        .empty svg {
+            color: var(--text-3);
+            margin-bottom: 12px
+        }
+
+        .empty h3 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 6px
+        }
+
+        .empty p {
+            font-size: 13px;
+            color: var(--text-2);
+            margin-bottom: 16px
+        }
+
+        .empty-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, .45);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 60px 20px 20px;
+            z-index: 50
+        }
+
+        .modal {
+            background: var(--surface);
+            border-radius: 14px;
+            width: 100%;
+            max-width: 520px;
+            box-shadow: 0 20px 50px rgba(15, 23, 42, .25);
+            max-height: calc(100vh - 80px);
+            overflow: auto
+        }
+
+        .modal-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .modal-head h2 {
+            font-size: 15px;
+            font-weight: 700
+        }
+
+        .modal-body {
+            padding: 20px 22px;
+            display: grid;
+            gap: 16px
+        }
+
+        .field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 6px
+        }
+
+        .field .hint {
+            font-size: 11.5px;
+            color: var(--text-3);
+            margin-top: 5px
+        }
+
+        .field .opt {
+            color: var(--text-3);
+            font-weight: 500
+        }
+
+        .field .input,
+        textarea.input {
+            width: 100%
+        }
+
+        textarea.input {
+            resize: vertical;
+            min-height: 56px;
+            font-family: inherit
+        }
+
+        .row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px
+        }
+
+        .pw-wrap {
+            position: relative
+        }
+
+        .pw-wrap .input {
+            padding-right: 40px
+        }
+
+        .pw-wrap .icon-btn {
+            position: absolute;
+            right: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            width: 30px;
+            height: 30px
+        }
+
+        .scan-status {
+            font-size: 12px;
+            color: var(--text-2);
+            background: #F6F7F9;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            line-height: 1.5
+        }
+
+        .modal-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 22px;
+            border-top: 1px solid var(--border);
+            background: #FBFCFD;
+            border-radius: 0 0 14px 14px;
+            flex-wrap: wrap
+        }
+
+        .modal-actions .spacer {
+            margin-right: auto
+        }
+
+        .toasts {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 100;
+            max-width: 380px
+        }
+
+        .toast {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: #101828;
+            color: #F3F4F6;
+            font-size: 13px;
+            padding: 11px 14px;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, .25);
+            animation: toastIn .25s ease
+        }
+
+        .toast svg {
+            flex: none;
+            margin-top: 1px
+        }
+
+        .toast-success svg {
+            color: #4ADE80
+        }
+
+        .toast-error svg {
+            color: #F87171
+        }
+
+        .toast-info svg {
+            color: #93B4FF
+        }
+
+        .toast.out {
+            opacity: 0;
+            transform: translateY(6px);
+            transition: all .3s
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        .fetch-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            z-index: 200;
+            overflow: hidden
+        }
+
+        .fetch-progress::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 36%;
+            background: var(--accent);
+            animation: indet 1.1s ease-in-out infinite
+        }
+
+        @keyframes indet {
+            0% {
+                left: -36%
+            }
+
+            100% {
+                left: 100%
+            }
+        }
+
+        .foot {
+            text-align: center;
+            font-size: 11.5px;
+            color: var(--text-3);
+            margin-top: 26px
+        }
+
+        @media (max-width:900px) {
+            .panels {
+                grid-template-columns: 1fr
+            }
+
+            .wrap {
+                padding: 18px 14px 40px
+            }
+
+            .controls-right {
+                text-align: left
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="fetchProgress" class="fetch-progress" hidden></div>
+
+    <div class="wrap">
+
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-mark">FD</div>
+                <div>
+                    <div class="brand-title">Collaborator Dashboard</div>
+                    <div class="brand-sub" id="brandSub">Freshdesk</div>
+                </div>
+            </div>
+            <div class="topbar-right">
+                <span class="badge" id="liveBadge"><span class="dot"></span><span id="liveText">Paused</span></span>
+                <button class="icon-btn" id="settingsBtn" title="Settings">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="4" y1="21" x2="4" y2="14" />
+                        <line x1="4" y1="10" x2="4" y2="3" />
+                        <line x1="12" y1="21" x2="12" y2="12" />
+                        <line x1="12" y1="8" x2="12" y2="3" />
+                        <line x1="20" y1="21" x2="20" y2="16" />
+                        <line x1="20" y1="12" x2="20" y2="3" />
+                        <line x1="1" y1="14" x2="7" y2="14" />
+                        <line x1="9" y1="8" x2="15" y2="8" />
+                        <line x1="17" y1="16" x2="23" y2="16" />
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <section class="card controls">
+            <div class="controls-left">
+                <button id="startStopBtn" class="btn btn-start"></button>
+                <div class="interval">
+                    <span>every</span>
+                    <select id="intervalSel" class="select">
+                        <option value="1">1 min</option>
+                        <option value="2">2 min</option>
+                        <option value="5">5 min</option>
+                        <option value="10">10 min</option>
+                        <option value="15" selected>15 min</option>
+                        <option value="30">30 min</option>
+                        <option value="60">1 hour</option>
+                        <option value="custom">Custom…</option>
+                    </select>
+                    <input type="number" id="intervalCustom" class="input" min="1" max="720" value="20"
+                        style="width:76px" hidden>
+                    <span id="customMinLbl" hidden>min</span>
+                </div>
+                <div class="vr"></div>
+                <button id="fetchNowBtn" class="btn btn-outline"
+                    title="Fetches the latest changes (fast). Use Settings → Full re-sync to re-scan your entire history.">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10" />
+                        <polyline points="1 20 1 14 7 14" />
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                    </svg>
+                    Fetch now
+                </button>
+                <button id="exportBtn" class="btn btn-outline">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    Export CSV
+                </button>
+            </div>
+            <div class="controls-right">
+                <div class="meta-line" id="lastFetchMeta">No data yet</div>
+                <div class="meta-line dim" id="nextFetchMeta">Auto-sync off</div>
+            </div>
+        </section>
+
+        <section class="kpis" id="kpiGrid"></section>
+
+        <section class="panels">
+            <div class="card panel">
+                <div class="panel-title">Status distribution</div>
+                <div id="statusDist" class="dist-list"></div>
+            </div>
+            <div class="card panel">
+                <div class="panel-title">Type &amp; priority</div>
+                <div id="typeDist" class="dist-list"></div>
+            </div>
+        </section>
+
+        <section class="card table-card">
+            <div class="filters">
+                <div class="search">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <input id="searchInput" class="input" placeholder="Search subject or ticket ID">
+                </div>
+                <select id="statusFilter" class="select">
+                    <option value="all">All statuses</option>
+                </select>
+                <select id="typeFilter" class="select">
+                    <option value="all">All types</option>
+                </select>
+                <select id="priorityFilter" class="select">
+                    <option value="all">All priorities</option>
+                    <option value="1">P1 · Property</option>
+                    <option value="2">P2 · Commission</option>
+                    <option value="3">P3 · Policy</option>
+                    <option value="4">P4 · Other</option>
+                </select>
+                <select id="agentFilter" class="select">
+                    <option value="all">All agents</option>
+                </select>
+                <div class="date-range">
+                    <input type="date" id="fromDate" class="input" title="Created from">
+                    <span>→</span>
+                    <input type="date" id="toDate" class="input" title="Created to">
+                </div>
+                <button id="clearFilters" class="btn btn-ghost">Clear</button>
+                <div class="result-count" id="resultCount"></div>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-sort="id">Ticket</th>
+                            <th data-sort="subject">Subject</th>
+                            <th data-sort="type">Type</th>
+                            <th data-sort="status">Status</th>
+                            <th data-sort="created">Created</th>
+                            <th data-sort="closed">Closed</th>
+                            <th data-sort="overall" class="num">Overall</th>
+                            <th data-sort="agentName">Agent Name</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+                <div id="emptyState" class="empty" hidden>
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
+                        <path
+                            d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+                    </svg>
+                    <h3 id="emptyTitle">Connect your Freshdesk account</h3>
+                    <p id="emptyText">Add your Freshdesk API key in Settings,<br>then fetch your collaborator tickets.
+                    </p>
+                    <div class="empty-actions">
+                        <button id="emptySettings" class="btn btn-primary">Open settings</button>
+                        <button id="emptyFetch" class="btn btn-outline" hidden>Fetch now</button>
+                    </div>
+                </div>
+            </div>
+            <div class="pagination">
+                <div class="page-size">
+                    <span>Rows</span>
+                    <select id="perPageSel" class="select">
+                        <option>25</option>
+                        <option selected>50</option>
+                        <option>100</option>
+                        <option>200</option>
+                    </select>
+                </div>
+                <div class="pager">
+                    <button id="prevPage" class="btn btn-outline">‹ Prev</button>
+                    <span id="pageInfo"></span>
+                    <button id="nextPage" class="btn btn-outline">Next ›</button>
+                </div>
+            </div>
+        </section>
+
+        <footer class="foot">Data is fetched directly from your browser to Freshdesk · Settings &amp; agent times stay
+            in this browser · Nothing is stored on any server</footer>
+    </div>
+
+    <!-- Settings modal -->
+    <div id="settingsModal" class="modal-overlay" hidden>
+        <div class="modal">
+            <div class="modal-head">
+                <h2>Settings</h2>
+                <button id="closeSettings" class="icon-btn" title="Close">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="scan-status" id="scanStatus"></div>
+                <div class="field">
+                    <label for="cfgDomain">Freshdesk domain</label>
+                    <input id="cfgDomain" class="input" placeholder="amberstudent.freshdesk.com" autocomplete="off"
+                        spellcheck="false">
+                    <p class="hint">Your Freshdesk URL, without https://</p>
+                </div>
+                <div class="field">
+                    <label for="cfgApiKey">API key</label>
+                    <div class="pw-wrap">
+                        <input id="cfgApiKey" type="password" class="input" placeholder="Freshdesk API key"
+                            autocomplete="off">
+                        <button id="toggleKeyBtn" class="icon-btn" type="button" title="Show / hide">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="hint">Freshdesk → Profile settings → API Keys. Stored only in this browser.</p>
+                </div>
+                <div class="field">
+                    <label for="cfgCollaborators">Collaborators to track</label>
+                    <textarea id="cfgCollaborators" class="input" rows="2" placeholder="Himanshu Sharma | 84045006004"
+                        spellcheck="false"></textarea>
+                    <p class="hint">One per line — <b>Name | Agent ID</b>. A ticket is included if the custom field
+                        below contains any name or ID.</p>
+                </div>
+                <div class="row-2">
+                    <div class="field">
+                        <label for="cfgField">Custom field</label>
+                        <input id="cfgField" class="input" value="cf_supply_support_collaborator" spellcheck="false">
+                    </div>
+                    <div class="field">
+                        <label for="cfgSince">Full-scan start <span class="opt">(optional)</span></label>
+                        <input id="cfgSince" type="date" class="input">
+                    </div>
+                </div>
+                <p class="hint" style="margin-top:-8px">Leave the start date <b>empty to scan your entire ticket
+                        history</b>. It's only used for full re-scans — quick syncs always fetch the latest changes
+                    automatically.</p>
+                <div class="field">
+                    <label for="cfgProxy">CORS proxy <span class="opt">(advanced, optional)</span></label>
+                    <input id="cfgProxy" class="input" placeholder="https://your-proxy.example/?url={url}"
+                        spellcheck="false">
+                    <p class="hint">Only needed if direct calls are blocked by the browser. Use <b>{url}</b> as the
+                        placeholder. ⚠ Your API key passes through this proxy — use one you trust.</p>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button id="testConnBtn" class="btn btn-outline">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                    </svg>
+                    Test connection
+                </button>
+                <button id="resyncBtn" class="btn btn-outline">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10" />
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                    </svg>
+                    Full re-sync
+                </button>
+                <span class="spacer"></span>
+                <button id="cancelSettings" class="btn btn-ghost">Cancel</button>
+                <button id="saveSettings" class="btn btn-primary">Save settings</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toasts" class="toasts"></div>
+
+    <script>
+        (() => {
+            'use strict';
+
+            /* ═══════════════ Constants & config ═══════════════ */
+
+            const LS_CONFIG = 'fdCollab.config.v1';
+
+            const LS_CACHE = 'fdCollab.cache.v2';
+
+            const DEFAULT_CONFIG = {
+                domain: 'amberstudent.freshdesk.com',
+                apiKey: '',
+                collaborators: 'Himanshu Sharma | 84045006004',
+                customField: 'cf_supply_support_collaborator',
+                updatedSince: '',          // empty = scan ENTIRE history on full re-syncs
+                proxy: '',
+                intervalMin: 15,
+            };
+
+            const STATUS_MAP = {
+                2: 'Open', 3: 'Pending', 4: 'Resolved', 5: 'Closed',
+                6: 'Waiting on Customer', 9: 'Waiting on KAM', 10: 'Supply Support Queries'
+            };
+            const STATUS_ORDER = ['Open', 'Pending', 'Waiting on Customer', 'Waiting on KAM', 'Supply Support Queries', 'Resolved', 'Closed'];
+            const STATUS_CLS = {
+                'Open': 'st-open', 'Pending': 'st-pending', 'Resolved': 'st-resolved', 'Closed': 'st-closed',
+                'Waiting on Customer': 'st-waitcust', 'Waiting on KAM': 'st-waitkam', 'Supply Support Queries': 'st-supply'
+            };
+            const STATUS_COLOR = {
+                'Open': '#2563EB', 'Pending': '#D97706', 'Resolved': '#16A34A', 'Closed': '#64748B',
+                'Waiting on Customer': '#C2410C', 'Waiting on KAM': '#0E7490', 'Supply Support Queries': '#475569'
+            };
+            const PRIORITY_INFO = {
+                1: { name: 'Property Creation', color: '#DC2626' },
+                2: { name: 'Commission', color: '#D97706' },
+                3: { name: 'Policy', color: '#2563EB' },
+                4: { name: 'Other', color: '#64748B' },
+            };
+
+            // Deep-scan engine settings
+            const FD_EPOCH_MS = Date.parse('2010-01-01T00:00:00Z'); // Freshdesk launched 2010 — nothing older exists
+            const SCAN_PACE_MS = 1200;                               // base delay between API requests
+            let paceMs = SCAN_PACE_MS;                               // raised automatically if rate-limited
+
+            /* ═══════════════ State ═══════════════ */
+
+            const state = {
+                tickets: [], view: [],
+                running: false, fetching: false, cancelRequested: false, hiddenWait: false,
+                nextFetchAt: null, timerId: null, lastFetchedAt: null, lastSyncedAt: null,
+                scanComplete: false, scannedCount: 0, fullAttempted: false,
+                filters: { q: '', status: 'all', type: 'all', priority: 'all', agent: 'all', from: '', to: '' },
+                sort: { key: 'default', dir: 1 },
+                page: 1, perPage: 50,
+            };
+
+            /* ═══════════════ Helpers ═══════════════ */
+
+            const $ = id => document.getElementById(id);
+            const sleep = ms => new Promise(r => setTimeout(r, ms));
+            const escapeHtml = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+            const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
+            const fmtDateTime = d => d.toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+            const fmtClock = d => d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const fmtMMSS = s => String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+            const pct = (a, b) => b ? Math.round(a / b * 100) + '%' : '0%';
+            function fmtDur(h) { if (!h || h <= 0) return '—'; if (h < 48) return (Math.round(h * 10) / 10) + 'h'; const d = Math.floor(h / 24), m = Math.round(h % 24); return d + 'd' + (m ? ' ' + m + 'h' : ''); }
+            function fmtMonth(iso) { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }); }
+            function priorityOf(type) { const t = String(type || '').toLowerCase(); if (t.includes('property')) return 1; if (t.includes('commission')) return 2; if (t.includes('policy')) return 3; return 4; }
+            function statusIdx(s) { const i = STATUS_ORDER.indexOf(s); return i === -1 ? 99 : i; }
+
+            const svgW = (inner, w = 15) => `<svg width="${w}" height="${w}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+            const I = {
+                play: `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5.3v13.4c0 .9 1 1.5 1.8 1L20 13c.8-.5.8-1.6 0-2L8.8 4.3C8 3.8 7 4.3 7 5.3z"/></svg>`,
+                stop: `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2.5"/></svg>`,
+                x: svgW('<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>', 13),
+                external: svgW('<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>', 12),
+                eye: svgW('<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>'),
+                eyeOff: svgW('<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>'),
+                check: svgW('<polyline points="20 6 9 17 4 12"/>'),
+                alert: svgW('<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>'),
+                info: svgW('<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>'),
+            };
+
+            /* ═══════════════ Storage ═══════════════ */
+
+            function lsGet(k) { try { return localStorage.getItem(k); } catch (_) { return null; } }
+            function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (_) { } }
+            function getConfig() { try { return Object.assign({}, DEFAULT_CONFIG, JSON.parse(lsGet(LS_CONFIG) || 'null') || {}); } catch (_) { return Object.assign({}, DEFAULT_CONFIG); } }
+            function setConfig(cfg) { lsSet(LS_CONFIG, JSON.stringify(cfg)); }
+            function parseCollaborators(str) {
+                return String(str || '').split('\n').map(l => l.trim()).filter(Boolean).map(l => {
+                    const [name, id] = l.split('|').map(p => p.trim());
+                    return { name: name || '', id: id || '' };
+                });
+            }
+            function getAgentName(t, cfg) {
+                const collabs = parseCollaborators(cfg.collaborators);
+                if (!collabs.length) return '';
+                const raw = (t.custom_fields || {})[cfg.customField];
+                if (raw === null || raw === undefined || raw === '') return '';
+                const text = JSON.stringify(raw).toLowerCase();
+                const matched = collabs.find(c => 
+                    (c.name && text.includes(c.name.toLowerCase())) ||
+                    (c.id && text.includes(c.id.toLowerCase()))
+                );
+                return matched ? (matched.name || matched.id) : '';
+            }
+            const ticketUrl = id => 'https://' + getConfig().domain + '/a/tickets/' + id;
+
+            /* ═══════════════ Freshdesk API ═══════════════ */
+
+            function withProxy(url, proxy) {
+                proxy = (proxy || '').trim();
+                if (!proxy) return url;
+                if (proxy.includes('{url}')) return proxy.replace('{url}', encodeURIComponent(url));
+                return proxy.replace(/\/+$/, '') + '/' + url;
+            }
+
+            async function apiFetch(url, auth, attempt = 0) {
+                let res;
+                try {
+                    res = await fetch(url, { headers: { 'Authorization': auth, 'Accept': 'application/json' } });
+                } catch (_) { throw new Error('NETWORK'); }
+                if (res.status === 429) {
+                    if (attempt >= 5) throw new Error('Rate limited by Freshdesk — wait a minute and try again.');
+                    paceMs = Math.min(6000, Math.max(paceMs, SCAN_PACE_MS) * 1.5);  // slow down for the rest of the scan
+                    const wait = (parseInt(res.headers.get('Retry-After'), 10) || 25) + 1;
+                    setProgress(`Rate limited — waiting ${wait}s before retrying…`);
+                    await sleep(wait * 1000);
+                    return apiFetch(url, auth, attempt + 1);
+                }
+                if (!res.ok) {
+                    let msg = res.statusText;
+                    try { const j = await res.json(); if (j && j.message) msg = j.message; } catch (_) { }
+                    if (res.status === 401) msg = 'Invalid API key — check Settings';
+                    if (res.status === 403) msg = 'API key lacks permission';
+                    if (res.status === 404) msg = 'Freshdesk domain not found — check Settings';
+                    throw new Error(`${res.status} · ${msg}`);
+                }
+                return res;
+            }
+
+            // Fetch one page of the ticket list, filtered to tickets updated after `sinceMs`
+            async function fetchWindow(cfg, sinceMs, page) {
+                const since = new Date(sinceMs).toISOString().slice(0, 19) + 'Z';
+                const url = `https://${cfg.domain}/api/v2/tickets?per_page=100&page=${page}&include=stats&updated_since=${encodeURIComponent(since)}`;
+                const res = await apiFetch(withProxy(url, cfg.proxy), 'Basic ' + btoa(cfg.apiKey + ':X'));
+                let data;
+                try { data = await res.json(); } catch (_) { throw new Error('Could not parse Freshdesk response'); }
+                if (!Array.isArray(data)) throw new Error((data && data.message) || 'Unexpected Freshdesk response');
+                return data;
+            }
+
+            function matchesCollab(t, cfg) {
+                const collabs = parseCollaborators(cfg.collaborators);
+                if (!collabs.length) return false;
+                const raw = (t.custom_fields || {})[cfg.customField];
+                if (raw === null || raw === undefined || raw === '') return false;
+                const text = JSON.stringify(raw).toLowerCase();
+                return collabs.some(c =>
+                    (c.name && text.includes(c.name.toLowerCase())) ||
+                    (c.id && text.includes(c.id.toLowerCase()))
+                );
+            }
+
+            function transform(t) {
+                const created = new Date(t.created_at);
+                let closedAt = null;
+                if (t.status === 4 || t.status === 5) {
+                    const s = t.stats || {};
+                    closedAt = new Date(s.closed_at || s.resolved_at || t.updated_at);
+                }
+                const end = closedAt || new Date(t.updated_at);
+                return {
+                    id: t.id,
+                    subject: t.subject || '(no subject)',
+                    type: t.type || 'Other',
+                    status: STATUS_MAP[t.status] || ('Status ' + t.status),
+                    statusCode: t.status,
+                    createdAt: created,
+                    closedAt,
+                    overallHrs: Math.max(0, (end - created) / 36e5),
+                    agentName: getAgentName(t, getConfig()),
+                };
+            }
+
+            function fetchErrorMessage(err) {
+                const m = String((err && err.message) || err);
+                if (m === 'NETWORK') return 'Could not reach Freshdesk. Check internet + domain. If it persists, it may be browser CORS — see the proxy option in Settings.';
+                return 'Freshdesk error: ' + m;
+            }
+
+            /* ═══════════════ Deep-scan engine ═══════════════
+               Walks the ENTIRE ticket history using updated_since, the method Freshdesk
+               recommends for complete exports. No ticket caps, no reliance on deep
+               page numbers. Works even if Freshdesk caps the page size. */
+
+            function makeCollector(cfg) {
+                const seen = new Set(), matched = new Map(), nonMatch = new Set();
+                let scanned = 0;
+                return {
+                    collect(list) {
+                        let fresh = 0, maxU = 0;
+                        for (const t of list) {
+                            const u = new Date(t.updated_at).getTime() || 0;
+                            if (u > maxU) maxU = u;
+                            if (!seen.has(t.id)) {
+                                seen.add(t.id); fresh++; scanned++;
+                                if (matchesCollab(t, cfg)) matched.set(t.id, t); else nonMatch.add(t.id);
+                            }
+                        }
+                        return { fresh, maxU };
+                    },
+                    get scanned() { return scanned; },
+                    result(extra) { return Object.assign({ matched: [...matched.values()], nonMatch: [...nonMatch], scanned }, extra); }
+                };
+            }
+
+            async function deepScan(cfg, startMs, onProgress, isCancelled) {
+                const PER = 100, MAX_STEPS = 20000;
+                const col = makeCollector(cfg);
+                let cursorMs = startMs, requests = 0;
+                let cancelled = false, completed = false, orderVerified = false, stall = 0;
+
+                for (let step = 0; step < MAX_STEPS; step++) {
+                    if (isCancelled()) { cancelled = true; break; }
+
+                    const list = await fetchWindow(cfg, cursorMs, 1);
+                    requests++;
+                    await sleep(paceMs);
+
+                    if (!list.length) { completed = true; break; }   // nothing left after cursor → full history covered
+
+                    // The walk depends on ascending updated_at order (Freshdesk's documented
+                    // behaviour with updated_since). Verify once; fall back safely if not.
+                    if (!orderVerified) {
+                        orderVerified = true;
+                        if (list.length > 1 &&
+                            new Date(list[0].updated_at).getTime() > new Date(list[list.length - 1].updated_at).getTime()) {
+                            return await pageScan(cfg, startMs, list, col, requests, onProgress, isCancelled);
+                        }
+                    }
+
+                    const { fresh, maxU } = col.collect(list);
+                    onProgress(col.scanned, list[0].updated_at);
+
+                    if (fresh > 0) {
+                        // Advance to the newest update seen, with a 1-second overlap.
+                        // Re-fetched tickets are absorbed by de-duplication.
+                        const next = maxU - 1000;
+                        if (next > cursorMs) { cursorMs = next; stall = 0; }
+                        else if (++stall > 10) { cursorMs += 1000; stall = 0; }
+                    } else {
+                        // Page 1 was entirely already-seen tickets → many tickets share one
+                        // timestamp. Collect stragglers on deeper pages, then jump past it.
+                        let advanced = false;
+                        for (let p = 2; p <= 50 && !cancelled; p++) {
+                            if (isCancelled()) { cancelled = true; break; }
+                            let pg;
+                            try { pg = await fetchWindow(cfg, cursorMs, p); }
+                            catch (_) { break; }   // page+updated_since unsupported → just jump past
+                            requests++;
+                            await sleep(paceMs);
+                            if (!pg.length) break;
+                            const c2 = col.collect(pg);
+                            onProgress(col.scanned, pg[0].updated_at);
+                            if (c2.fresh > 0) {
+                                if (c2.maxU - 1000 > cursorMs) cursorMs = c2.maxU - 1000;
+                                advanced = true;
+                                break;
+                            }
+                        }
+                        if (cancelled) break;
+                        if (!advanced) cursorMs += 1000;
+                    }
+                }
+
+                return col.result({ requests, cancelled, truncated: !completed && !cancelled });
+            }
+
+            // Fallback if the API ever returns a non-ascending order: classic page-number
+            // pagination with a much higher cap than before. De-duplicated by ticket ID.
+            async function pageScan(cfg, startMs, firstPage, col, requestsSoFar, onProgress, isCancelled) {
+                const MAX_PAGES = 1000;
+                let requests = requestsSoFar, cancelled = false, completed = false;
+
+                col.collect(firstPage);
+                onProgress(col.scanned, firstPage[firstPage.length - 1].updated_at);
+
+                for (let page = 2; page <= MAX_PAGES; page++) {
+                    if (isCancelled()) { cancelled = true; break; }
+                    const pg = await fetchWindow(cfg, startMs, page);
+                    requests++;
+                    await sleep(paceMs);
+                    if (!pg.length) { completed = true; break; }
+                    col.collect(pg);
+                    onProgress(col.scanned, pg[pg.length - 1].updated_at);
+                }
+
+                return col.result({ requests, cancelled, truncated: !completed && !cancelled });
+            }
+
+            /* ═══════════════ Fetch orchestration ═══════════════ */
+
+            function fetchTickets() { return runSync('manual'); }
+
+            async function runSync(mode) {   // 'auto' | 'manual' | 'full'
+                if (state.fetching) {
+                    if (mode !== 'auto') toast('A fetch is already in progress', 'info');
+                    return;
+                }
+                const cfg = getConfig();
+                if (!cfg.apiKey || !cfg.domain) { openSettings(); toast('Add your API key in Settings first', 'error'); return; }
+
+                // Decide: full deep scan or quick incremental sync
+                const wantFull = mode === 'full' || !state.scanComplete;
+                if (mode === 'auto' && wantFull && state.fullAttempted) {
+                    // A full scan was cancelled before — don't auto-restart a long scan
+                    toast('Deep scan needed — click "Fetch now" to scan your full history', 'info');
+                    return;
+                }
+
+                state.fetching = true;
+                state.cancelRequested = false;
+                paceMs = SCAN_PACE_MS;
+                uiFetchStart();
+
+                let startMs;
+                if (wantFull) {
+                    state.fullAttempted = true;
+                    startMs = cfg.updatedSince ? Date.parse(cfg.updatedSince + 'T00:00:00Z') : FD_EPOCH_MS;
+                    if (isNaN(startMs)) startMs = FD_EPOCH_MS;
+                    toast('Deep scan started — scanning your entire history. You can cancel anytime.', 'info', 6000);
+                } else {
+                    // Quick sync: everything updated since the last successful sync (5-min overlap)
+                    startMs = Math.max((state.lastSyncedAt ? state.lastSyncedAt.getTime() : FD_EPOCH_MS) - 5 * 60 * 1000, FD_EPOCH_MS);
+                }
+
+                const label = wantFull ? 'Deep scan' : 'Quick sync';
+                setProgress(label + '…');
+                const syncStartedAt = new Date();
+
+                try {
+                    const r = await deepScan(cfg, startMs, (n, oldestIso) => {
+                        if (wantFull) setProgress(`Deep scan… ${n.toLocaleString()} tickets scanned · back to ${fmtMonth(oldestIso)}`);
+                        else setProgress(`Quick sync… ${n.toLocaleString()} tickets`);
+                    }, () => state.cancelRequested);
+
+                    if (r.cancelled || r.truncated) {
+                        if (wantFull) {
+                            // Partial data — show it, but flag clearly that the scan is incomplete
+                            state.tickets = r.matched.map(transform);
+                            state.scannedCount = r.scanned;
+                            state.scanComplete = false;
+                            state.lastFetchedAt = new Date();
+                            saveCache(); renderAll(); updateMetaLine();
+                            toast(r.cancelled
+                                ? 'Scan cancelled — showing partial results. Use Settings → Full re-sync for complete data.'
+                                : 'Scan stopped at safety limit — data may be incomplete.', 'info', 8000);
+                        } else {
+                            mergeResults(r);
+                            state.lastFetchedAt = new Date();
+                            saveCache(); renderAll(); updateMetaLine();
+                            toast('Sync cancelled', 'info');
+                        }
+                    } else {
+                        if (wantFull) {
+                            state.tickets = r.matched.map(transform);   // full scan replaces everything
+                            state.scannedCount = r.scanned;
+                            state.scanComplete = true;
+                            state.fullAttempted = false;
+                        } else {
+                            mergeResults(r);                            // incremental merge
+                        }
+                        state.lastSyncedAt = syncStartedAt;
+                        state.lastFetchedAt = new Date();
+                        saveCache(); renderAll(); updateMetaLine();
+                        if (wantFull) {
+                            toast(`Full scan complete — ${state.tickets.length} of your tickets (scanned ${r.scanned.toLocaleString()} total)`, 'success', 8000);
+                        } else {
+                            toast(`Up to date — ${state.tickets.length} tickets`, 'success');
+                        }
+                    }
+                } catch (err) {
+                    console.error(err);
+                    updateMetaLine();
+                    toast(fetchErrorMessage(err), 'error', 7000);
+                } finally {
+                    state.fetching = false;
+                    uiFetchEnd();
+                }
+            }
+
+            // Incremental merge: upsert tickets that now match, drop ones that no longer do
+            function mergeResults(r) {
+                const map = new Map(state.tickets.map(t => [String(t.id), t]));
+                for (const t of r.matched) map.set(String(t.id), transform(t));
+                for (const id of r.nonMatch) map.delete(String(id));
+                state.tickets = [...map.values()];
+            }
+
+            function setProgress(text) { $('lastFetchMeta').textContent = text; }
+            function uiFetchStart() { $('fetchProgress').hidden = false; $('fetchNowBtn').disabled = true; $('lastFetchMeta').classList.add('loading'); updateControlUI(); }
+            function uiFetchEnd() { $('fetchProgress').hidden = true; $('fetchNowBtn').disabled = false; $('lastFetchMeta').classList.remove('loading'); updateControlUI(); }
+
+            /* ═══════════════ Auto-sync engine (start/stop) ═══════════════ */
+
+            function startMonitoring() {
+                const cfg = getConfig();
+                if (!cfg.apiKey) { openSettings(); toast('Add your API key first', 'error'); return; }
+                state.running = true;
+                updateControlUI();
+                runSync('auto');
+                scheduleNext();
+            }
+            function stopMonitoring() {
+                state.running = false;
+                state.hiddenWait = false;
+                clearTimeout(state.timerId);
+                state.nextFetchAt = null;
+                updateControlUI();
+                toast('Auto-sync stopped', 'info');
+            }
+            function scheduleNext() {
+                clearTimeout(state.timerId);
+                state.hiddenWait = false;
+                const ms = getIntervalMinutes() * 60000;
+                state.nextFetchAt = Date.now() + ms;
+                state.timerId = setTimeout(autoTick, ms);
+            }
+            async function autoTick() {
+                if (!state.running) return;
+                if (document.hidden) {
+                    state.hiddenWait = true;
+                    state.nextFetchAt = Date.now() + 20000;
+                    state.timerId = setTimeout(autoTick, 20000);
+                    return;
+                }
+                await runSync('auto');
+                if (state.running) scheduleNext();
+            }
+            function getIntervalMinutes() {
+                const v = $('intervalSel').value;
+                if (v === 'custom') return Math.max(1, parseInt($('intervalCustom').value, 10) || 15);
+                return parseInt(v, 10);
+            }
+            function onIntervalChange() {
+                const custom = $('intervalSel').value === 'custom';
+                $('intervalCustom').hidden = !custom;
+                $('customMinLbl').hidden = !custom;
+                const cfg = getConfig();
+                cfg.intervalMin = getIntervalMinutes();
+                setConfig(cfg);
+                if (state.running) { scheduleNext(); toast(`Auto-sync set to every ${cfg.intervalMin} min`, 'info'); }
+            }
+            function tick() {
+                const el = $('nextFetchMeta');
+                if (state.fetching) { el.textContent = 'Syncing…'; return; }
+                if (state.running && state.nextFetchAt) {
+                    const s = Math.max(0, Math.round((state.nextFetchAt - Date.now()) / 1000));
+                    el.textContent = (state.hiddenWait ? 'Paused — tab hidden · ' : '') + 'next sync in ' + fmtMMSS(s);
+                } else if (state.running) { el.textContent = 'Auto-sync on'; }
+                else el.textContent = 'Auto-sync off';
+            }
+
+            /* ═══════════════ Filtering / sorting / stats ═══════════════ */
+
+            function applyFilters(rows) {
+                const f = state.filters;
+                const q = f.q.trim().toLowerCase();
+                const from = f.from ? new Date(f.from + 'T00:00:00') : null;
+                const to = f.to ? new Date(f.to + 'T23:59:59') : null;
+                return rows.filter(r => {
+                    if (q && !String(r.id).includes(q) && !r.subject.toLowerCase().includes(q)) return false;
+                    if (f.status !== 'all' && r.status !== f.status) return false;
+                    if (f.type !== 'all' && r.type !== f.type) return false;
+                    if (f.priority !== 'all' && priorityOf(r.type) !== +f.priority) return false;
+                    if (f.agent !== 'all' && r.agentName !== f.agent) return false;
+                    if (from && r.createdAt < from) return false;
+                    if (to && r.createdAt > to) return false;
+                    return true;
+                });
+            }
+
+            function sortRows(rows) {
+                const { key, dir } = state.sort;
+                const arr = rows.slice();
+                if (key === 'default') {
+                    const isDone = r => r.status === 'Resolved' || r.status === 'Closed';
+                    arr.sort((a, b) => {
+                        const d = isDone(a) - isDone(b); if (d) return d;
+                        const p = priorityOf(a.type) - priorityOf(b.type); if (p) return p;
+                        return b.createdAt - a.createdAt;
+                    });
+                    return arr;
+                }
+                const val = r => {
+                    switch (key) {
+                        case 'id': return r.id;
+                        case 'subject': return r.subject.toLowerCase();
+                        case 'type': return r.type.toLowerCase();
+                        case 'status': return statusIdx(r.status);
+                        case 'created': return r.createdAt.getTime();
+                        case 'closed': return r.closedAt ? r.closedAt.getTime() : 0;
+                        case 'overall': return r.overallHrs;
+                        case 'agentName': return r.agentName.toLowerCase();
+                    }
+                };
+                arr.sort((a, b) => { const va = val(a), vb = val(b); return va < vb ? -dir : va > vb ? dir : 0; });
+                return arr;
+            }
+
+            function computeStats(rows) {
+                const byStatus = {}, byPriority = { 1: 0, 2: 0, 3: 0, 4: 0 };
+                let active = 0, done = 0, closeHrs = 0;
+                for (const r of rows) {
+                    byStatus[r.status] = (byStatus[r.status] || 0) + 1;
+                    byPriority[priorityOf(r.type)]++;
+                    if (r.status === 'Resolved' || r.status === 'Closed') { done++; closeHrs += r.overallHrs; }
+                    else active++;
+                }
+                return {
+                    total: rows.length, active, done, byStatus, byPriority,
+                    avgClose: done ? closeHrs / done : 0
+                };
+            }
+
+            /* ═══════════════ Rendering ═══════════════ */
+
+            function renderAll() { populateFilters(); refreshView(); renderSummary(); renderTable(); }
+            function refreshView() { state.view = sortRows(applyFilters(state.tickets)); }
+            function renderSummary() { const s = computeStats(state.view); renderKpis(s); renderStatusDist(s); renderTypeDist(s); }
+
+            function renderKpis(s) {
+                const p1 = s.byPriority[1], p2 = s.byPriority[2];
+                const items = [
+                    ['Total tickets', s.total, state.scanComplete ? 'complete history' : 'partial — full scan pending'],
+                    ['Active', s.active, pct(s.active, s.total) + ' not resolved or closed'],
+                    ['Resolved / Closed', s.done, pct(s.done, s.total) + ' completed'],
+                    ['Avg time to close', fmtDur(s.avgClose), `across ${s.done} closed tickets`],
+                    ['High priority', p1 + p2, `${p1} property · ${p2} commission`],
+                ];
+                $('kpiGrid').innerHTML = items.map(([l, v, sub]) =>
+                    `<div class="kpi"><div class="kpi-label">${l}</div><div class="kpi-value">${v}</div><div class="kpi-sub">${sub}</div></div>`
+                ).join('');
+            }
+
+            function renderStatusDist(s) {
+                if (!s.total) { $('statusDist').innerHTML = '<div class="dist-empty">No data in view</div>'; return; }
+                const names = Object.keys(s.byStatus).sort((a, b) => statusIdx(a) - statusIdx(b));
+                $('statusDist').innerHTML = names.map(st => {
+                    const c = s.byStatus[st], p = c / s.total * 100;
+                    return `<div class="dist-row">
+      <div class="dist-name"><i class="sdot" style="background:${STATUS_COLOR[st] || '#6B7280'}"></i>${escapeHtml(st)}</div>
+      <div class="dist-count">${c}</div>
+      <div class="bar"><i style="width:${p.toFixed(1)}%;background:${STATUS_COLOR[st] || '#6B7280'}"></i></div>
+      <div class="dist-pct">${p.toFixed(0)}%</div>
+    </div>`;
+                }).join('');
+            }
+
+            function renderTypeDist(s) {
+                if (!s.total) { $('typeDist').innerHTML = '<div class="dist-empty">No data in view</div>'; return; }
+                $('typeDist').innerHTML = [1, 2, 3, 4].map(p => {
+                    const c = s.byPriority[p] || 0, info = PRIORITY_INFO[p];
+                    return `<div class="dist-row">
+      <div class="dist-name"><i class="sdot" style="background:${info.color}"></i>P${p} · ${info.name}</div>
+      <div class="dist-count">${c}</div>
+      <div class="bar"><i style="width:${(c / s.total * 100).toFixed(1)}%;background:${info.color}"></i></div>
+      <div class="dist-pct">${(c / s.total * 100).toFixed(0)}%</div>
+    </div>`;
+                }).join('');
+            }
+
+            function rowHtml(r) {
+                const p = priorityOf(r.type);
+                const cls = STATUS_CLS[r.status] || 'st-other';
+                return `<tr>
+    <td><a class="ticket-link" href="${ticketUrl(r.id)}" target="_blank" rel="noopener">${r.id}${I.external}</a></td>
+    <td class="subj" title="${escapeHtml(r.subject)}">${escapeHtml(r.subject)}</td>
+    <td><span class="chip chip-p${p}">P${p}</span> <span class="type-name">${escapeHtml(r.type)}</span></td>
+    <td><span class="pill ${cls}">${escapeHtml(r.status)}</span></td>
+    <td class="nowrap">${fmtDateTime(r.createdAt)}</td>
+    <td class="nowrap ${r.closedAt ? '' : 'dim'}">${r.closedAt ? fmtDateTime(r.closedAt) : '—'}</td>
+    <td class="num dur">${fmtDur(r.overallHrs)}</td>
+    <td class="nowrap">${escapeHtml(r.agentName || '—')}</td>
+  </tr>`;
+            }
+
+            function renderTable() {
+                const rows = state.view;
+                const pages = Math.max(1, Math.ceil(rows.length / state.perPage));
+                if (state.page > pages) state.page = pages;
+                const start = (state.page - 1) * state.perPage;
+                $('tableBody').innerHTML = rows.slice(start, start + state.perPage).map(rowHtml).join('');
+
+                const empty = $('emptyState'), cfg = getConfig();
+                if (!state.tickets.length) {
+                    empty.hidden = false;
+                    $('emptyTitle').textContent = cfg.apiKey ? 'No tickets found' : 'Connect your Freshdesk account';
+                    $('emptyText').innerHTML = cfg.apiKey
+                        ? 'No tickets matched your collaborator settings yet.<br>Check the collaborator names and custom field in Settings.'
+                        : 'Add your Freshdesk API key in Settings,<br>then fetch your collaborator tickets.';
+                    $('emptySettings').hidden = !!cfg.apiKey;
+                    $('emptyFetch').hidden = !cfg.apiKey;
+                } else if (!rows.length) {
+                    empty.hidden = false;
+                    $('emptyTitle').textContent = 'No tickets match your filters';
+                    $('emptyText').innerHTML = 'Try clearing the search or filters above.';
+                    $('emptySettings').hidden = true; $('emptyFetch').hidden = true;
+                } else empty.hidden = true;
+
+                $('pageInfo').textContent = `Page ${state.page} of ${pages} · ${rows.length} rows`;
+                $('prevPage').disabled = state.page <= 1;
+                $('nextPage').disabled = state.page >= pages;
+                $('resultCount').textContent = `${rows.length} of ${state.tickets.length} tickets`;
+            }
+
+            function fillSelect(sel, options, allLabel, current) {
+                const values = ['all', ...options];
+                if (!values.includes(current)) current = 'all';
+                sel.innerHTML = values.map(v => `<option value="${escapeHtml(v)}">${v === 'all' ? allLabel : escapeHtml(v)}</option>`).join('');
+                sel.value = current;
+            }
+            function populateFilters() {
+                const statuses = [...new Set(state.tickets.map(t => t.status))].sort((a, b) => statusIdx(a) - statusIdx(b));
+                fillSelect($('statusFilter'), statuses, 'All statuses', state.filters.status);
+                const types = [...new Set(state.tickets.map(t => t.type))].sort();
+                fillSelect($('typeFilter'), types, 'All types', state.filters.type);
+                const agents = parseCollaborators(getConfig().collaborators).map(c => c.name || c.id).filter(Boolean);
+                fillSelect($('agentFilter'), agents, 'All agents', state.filters.agent);
+            }
+
+            /* ═══════════════ Cache ═══════════════ */
+
+            function saveCache() {
+                try {
+                    const rows = state.tickets.map(r => ({
+                        i: r.id, s: r.subject, t: r.type, st: r.status, sc: r.statusCode,
+                        c: r.createdAt.toISOString(), cl: r.closedAt ? r.closedAt.toISOString() : null, h: r.overallHrs, a: r.agentName
+                    }));
+                    lsSet(LS_CACHE, JSON.stringify({
+                        when: state.lastFetchedAt ? state.lastFetchedAt.toISOString() : null,
+                        syncedAt: state.lastSyncedAt ? state.lastSyncedAt.toISOString() : null,
+                        scanComplete: !!state.scanComplete,
+                        scannedCount: state.scannedCount || 0,
+                        rows,
+                    }));
+                } catch (_) { }
+            }
+            function restoreCache() {
+                try {
+                    const c = JSON.parse(lsGet(LS_CACHE) || 'null');
+                    if (!c || !Array.isArray(c.rows)) return;
+                    state.tickets = c.rows.map(x => ({
+                        id: x.i, subject: x.s || '(no subject)', type: x.t || 'Other', status: x.st, statusCode: x.sc,
+                        createdAt: new Date(x.c), closedAt: x.cl ? new Date(x.cl) : null,
+                        overallHrs: Number(x.h) || 0, agentName: x.a || '',
+                    }));
+                    state.lastFetchedAt = c.when ? new Date(c.when) : null;
+                    state.lastSyncedAt = c.syncedAt ? new Date(c.syncedAt) : null;
+                    state.scanComplete = !!c.scanComplete;
+                    state.scannedCount = Number(c.scannedCount) || 0;
+                } catch (_) { }
+            }
+
+            function updateMetaLine() {
+                const el = $('lastFetchMeta');
+                if (state.fetching) return;
+                if (state.lastFetchedAt) {
+                    el.textContent = (state.scanComplete ? 'Synced ' : 'Partial data ') + fmtClock(state.lastFetchedAt) +
+                        ' · ' + state.tickets.length + ' tickets' + (state.scanComplete ? '' : ' — full scan pending');
+                } else el.textContent = 'No data yet';
+            }
+
+            /* ═══════════════ Export CSV ═══════════════ */
+
+            function exportCsv() {
+                if (!state.view.length) { toast('Nothing to export', 'info'); return; }
+                const esc = v => { v = String(v ?? ''); if (/^[=+\-@]/.test(v)) v = "'" + v; return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+                const head = ['Ticket ID', 'Subject', 'Type', 'Priority', 'Status', 'Created', 'Closed', 'Overall (hrs)', 'Agent Name', 'Link'];
+                const lines = state.view.map(r => [
+                    r.id, r.subject, r.type, 'P' + priorityOf(r.type), r.status,
+                    fmtDateTime(r.createdAt), r.closedAt ? fmtDateTime(r.closedAt) : '',
+                    r.overallHrs.toFixed(2), r.agentName || '', ticketUrl(r.id)
+                ].map(esc).join(','));
+                const blob = new Blob(['\ufeff' + [head.map(esc).join(','), ...lines].join('\n')], { type: 'text/csv' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `freshdesk-collaborator-${new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-')}.csv`;
+                a.click(); URL.revokeObjectURL(a.href);
+                toast('CSV exported', 'success');
+            }
+
+            /* ═══════════════ Settings modal ═══════════════ */
+
+            function scanStatusText() {
+                if (!state.scanComplete) {
+                    return state.tickets.length
+                        ? '⚠ Partial data — the last deep scan was cancelled. Use "Full re-sync" for complete data.'
+                        : 'No complete scan yet. The next fetch will deep-scan your entire Freshdesk history (may take a few minutes on large accounts).';
+                }
+                return `✔ Last full scan: ${fmtDateTime(state.lastSyncedAt || state.lastFetchedAt)} · ${state.scannedCount.toLocaleString()} tickets scanned · ${state.tickets.length} matched`;
+            }
+
+            function openSettings() {
+                const cfg = getConfig();
+                $('cfgDomain').value = cfg.domain;
+                $('cfgApiKey').value = cfg.apiKey;
+                $('cfgCollaborators').value = cfg.collaborators;
+                $('cfgField').value = cfg.customField;
+                $('cfgSince').value = cfg.updatedSince || '';
+                $('cfgProxy').value = cfg.proxy || '';
+                $('scanStatus').textContent = scanStatusText();
+                $('settingsModal').hidden = false;
+            }
+            function closeSettings() { $('settingsModal').hidden = true; }
+            function readConfigFromForm() {
+                return {
+                    domain: $('cfgDomain').value.trim().replace(/^https?:\/\//, '').replace(/\/+$/, ''),
+                    apiKey: $('cfgApiKey').value.trim(),
+                    collaborators: $('cfgCollaborators').value.trim(),
+                    customField: $('cfgField').value.trim() || 'cf_supply_support_collaborator',
+                    updatedSince: $('cfgSince').value,
+                    proxy: $('cfgProxy').value.trim(),
+                    intervalMin: getConfig().intervalMin,
+                };
+            }
+            function saveSettings() {
+                const cfg = readConfigFromForm();
+                if (!cfg.domain) { toast('Domain is required', 'error'); return; }
+                setConfig(cfg);
+                updateBrandSub();
+                populateFilters();
+                onFilterChange();
+                closeSettings();
+                toast('Settings saved', 'success');
+            }
+            function startFullResync() {
+                const cfg = readConfigFromForm();
+                if (!cfg.domain || !cfg.apiKey) { toast('Enter domain and API key first', 'error'); return; }
+                setConfig(cfg);
+                updateBrandSub();
+                closeSettings();
+                runSync('full');
+            }
+            async function testConnection() {
+                const cfg = readConfigFromForm();
+                if (!cfg.domain || !cfg.apiKey) { toast('Enter domain and API key first', 'error'); return; }
+                const btn = $('testConnBtn'), orig = btn.innerHTML;
+                btn.disabled = true; btn.textContent = 'Testing…';
+                try {
+                    const url = withProxy(`https://${cfg.domain}/api/v2/tickets?per_page=1`, cfg.proxy);
+                    await apiFetch(url, 'Basic ' + btoa(cfg.apiKey + ':X'));
+                    toast('Connection successful', 'success');
+                } catch (e) { toast(fetchErrorMessage(e), 'error', 7000); }
+                finally { btn.disabled = false; btn.innerHTML = orig; }
+            }
+
+            /* ═══════════════ UI updates ═══════════════ */
+
+            function updateControlUI() {
+                const btn = $('startStopBtn'), badge = $('liveBadge');
+                if (state.fetching) {
+                    btn.className = 'btn btn-cancel';
+                    btn.innerHTML = I.x + '<span>Cancel fetch</span>';
+                    return;
+                }
+                if (state.running) {
+                    btn.className = 'btn btn-stop';
+                    btn.innerHTML = I.stop + '<span>Stop monitoring</span>';
+                    badge.className = 'badge live';
+                    $('liveText').textContent = 'Live';
+                } else {
+                    btn.className = 'btn btn-start';
+                    btn.innerHTML = I.play + '<span>Start monitoring</span>';
+                    badge.className = 'badge';
+                    $('liveText').textContent = 'Paused';
+                }
+            }
+            function updateBrandSub() {
+                const cfg = getConfig();
+                const names = parseCollaborators(cfg.collaborators).map(c => c.name).filter(Boolean);
+                $('brandSub').textContent = (cfg.domain || 'Freshdesk') + (names.length ? ' · ' + names.join(', ') : '');
+            }
+            function toast(msg, type = 'info', dur = 4200) {
+                const box = document.createElement('div');
+                box.className = 'toast toast-' + type;
+                box.innerHTML = (type === 'success' ? I.check : type === 'error' ? I.alert : I.info) + '<span>' + escapeHtml(msg) + '</span>';
+                $('toasts').appendChild(box);
+                setTimeout(() => { box.classList.add('out'); setTimeout(() => box.remove(), 350); }, dur);
+            }
+            function updateSortIndicators() {
+                document.querySelectorAll('th[data-sort]').forEach(th => {
+                    th.dataset.dir = th.dataset.sort === state.sort.key ? (state.sort.dir > 0 ? 'asc' : 'desc') : '';
+                });
+            }
+
+            /* ═══════════════ Events ═══════════════ */
+
+            function onFilterChange() {
+                state.page = 1;
+                refreshView(); renderSummary(); renderTable();
+            }
+            function clearFilters() {
+                state.filters = { q: '', status: 'all', type: 'all', priority: 'all', agent: 'all', from: '', to: '' };
+                $('searchInput').value = ''; $('priorityFilter').value = 'all'; $('agentFilter').value = 'all';
+                $('fromDate').value = ''; $('toDate').value = '';
+                populateFilters();
+                onFilterChange();
+            }
+            function onSortClick(th) {
+                const key = th.dataset.sort;
+                if (state.sort.key === key) state.sort.dir = -state.sort.dir;
+                else { state.sort.key = key; state.sort.dir = (key === 'subject' || key === 'type' || key === 'status') ? 1 : -1; }
+                updateSortIndicators();
+                refreshView(); renderTable();
+            }
+            function onAgentTimeChange(e) {
+                const inp = e.target.closest('.agent-input'); if (!inp) return;
+                const id = inp.dataset.id;
+                const v = parseFloat(inp.value);
+                const hrs = isFinite(v) && v > 0 ? v : 0;
+                setAgentTime(id, hrs);
+                const row = state.tickets.find(t => String(t.id) === String(id));
+                if (row) row.agentHrs = hrs;
+                refreshView(); renderSummary();
+                if (state.sort.key === 'agent') renderTable();
+            }
+
+            function bindEvents() {
+                $('startStopBtn').onclick = () => {
+                    if (state.fetching) { state.cancelRequested = true; toast('Cancelling fetch…', 'info'); return; }
+                    state.running ? stopMonitoring() : startMonitoring();
+                };
+                $('fetchNowBtn').onclick = () => fetchTickets();
+                $('exportBtn').onclick = exportCsv;
+                $('settingsBtn').onclick = openSettings;
+                $('closeSettings').onclick = closeSettings;
+                $('cancelSettings').onclick = closeSettings;
+                $('saveSettings').onclick = saveSettings;
+                $('resyncBtn').onclick = startFullResync;
+                $('testConnBtn').onclick = testConnection;
+                $('toggleKeyBtn').onclick = () => {
+                    const inp = $('cfgApiKey'), showing = inp.type === 'text';
+                    inp.type = showing ? 'password' : 'text';
+                    $('toggleKeyBtn').innerHTML = showing ? I.eye : I.eyeOff;
+                };
+                $('settingsModal').addEventListener('click', e => { if (e.target === $('settingsModal')) closeSettings(); });
+                document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('settingsModal').hidden) closeSettings(); });
+
+                $('intervalSel').onchange = onIntervalChange;
+                $('intervalCustom').onchange = onIntervalChange;
+
+                $('searchInput').addEventListener('input', debounce(() => { state.filters.q = $('searchInput').value; onFilterChange(); }, 180));
+                $('statusFilter').onchange = () => { state.filters.status = $('statusFilter').value; onFilterChange(); };
+                $('typeFilter').onchange = () => { state.filters.type = $('typeFilter').value; onFilterChange(); };
+                $('priorityFilter').onchange = () => { state.filters.priority = $('priorityFilter').value; onFilterChange(); };
+                $('agentFilter').onchange = () => { state.filters.agent = $('agentFilter').value; onFilterChange(); };
+                $('fromDate').onchange = () => { state.filters.from = $('fromDate').value; onFilterChange(); };
+                $('toDate').onchange = () => { state.filters.to = $('toDate').value; onFilterChange(); };
+                $('clearFilters').onclick = clearFilters;
+
+                document.querySelectorAll('th[data-sort]').forEach(th => th.onclick = () => onSortClick(th));
+                $('perPageSel').onchange = () => { state.perPage = +$('perPageSel').value; state.page = 1; renderTable(); };
+                $('prevPage').onclick = () => { if (state.page > 1) { state.page--; renderTable(); } };
+                $('nextPage').onclick = () => { state.page++; renderTable(); };
+
+
+                $('emptyFetch').onclick = () => fetchTickets();
+                $('emptySettings').onclick = openSettings;
+
+                document.addEventListener('visibilitychange', () => {
+                    if (!document.hidden && state.running && state.hiddenWait) {
+                        state.hiddenWait = false;
+                        clearTimeout(state.timerId);
+                        autoTick();
+                    }
+                });
+            }
+
+            /* ═══════════════ Init ═══════════════ */
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const cfg = getConfig();
+                const preset = ['1', '2', '5', '10', '15', '30', '60'];
+                if (preset.includes(String(cfg.intervalMin))) $('intervalSel').value = String(cfg.intervalMin);
+                else { $('intervalSel').value = 'custom'; $('intervalCustom').hidden = false; $('customMinLbl').hidden = false; $('intervalCustom').value = cfg.intervalMin || 15; }
+
+                restoreCache();
+                updateMetaLine();
+                updateBrandSub();
+                updateControlUI();
+                updateSortIndicators();
+                bindEvents();
+                renderAll();
+                setInterval(tick, 1000);
+            });
+
+        })();
+    </script>
+</body>
+
+</html>
