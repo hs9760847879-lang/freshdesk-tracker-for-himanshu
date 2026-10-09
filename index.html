@@ -1097,6 +1097,13 @@
                     </svg>
                     Export CSV
                 </button>
+                <button id="autoAssignBtn" class="btn btn-primary" onclick="window.autoAssignAll()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    Auto Assign
+                </button>
             </div>
             <div class="controls-right">
                 <div class="meta-line" id="lastFetchMeta">No data yet</div>
@@ -1163,6 +1170,7 @@
                             <th data-sort="closed">Closed</th>
                             <th data-sort="overall" class="num">Overall</th>
                             <th data-sort="agentName">Agent Name</th>
+                            <th>Execution</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody"></tbody>
@@ -1870,9 +1878,78 @@
                 }).join('');
             }
 
+            window.executeAutomation = async function(ticketId, agentNameStr, skipRefresh = false) {
+                const cfg = getConfig();
+                if (!cfg.apiKey || !cfg.domain) { toast('Add your API key first', 'error'); return false; }
+                
+                const collabs = parseCollaborators(cfg.collaborators);
+                const matched = collabs.find(c => c.name.toLowerCase() === agentNameStr.toLowerCase());
+                if (!matched || !matched.id) {
+                     toast('Agent ID not found in settings for ' + agentNameStr, 'error'); return false;
+                }
+                const agentId = parseInt(matched.id, 10);
+                const groupId = 84000215024; // Hardcoded Supply Support Internal Group ID
+
+                toast(`Assigning ticket ${ticketId}...`, 'info');
+                try {
+                    const payload = {
+                        status: 10,
+                        internal_group_id: groupId,
+                        internal_agent_id: agentId
+                    };
+
+                    const url = withProxy(`https://${cfg.domain}/api/v2/tickets/${ticketId}`, cfg.proxy);
+                    const res = await fetch(url, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': 'Basic ' + btoa(cfg.apiKey + ':X'),
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!res.ok) {
+                         const err = await res.json();
+                         console.error('Freshdesk API Error:', err, 'Payload sent:', payload);
+                         throw new Error('API Error - Check browser console');
+                    }
+                    toast(`Ticket ${ticketId} assigned successfully`, 'success');
+                    if (!skipRefresh) fetchTickets();
+                    return true;
+                } catch (e) {
+                    toast('Error: ' + e.message, 'error');
+                    return false;
+                }
+            };
+
+            window.autoAssignAll = async function() {
+                const openTickets = state.view.filter(r => r.status === 'Open' && r.agentName);
+                if (!openTickets.length) {
+                    toast('No Open tickets found with assigned agents to auto-assign.', 'info');
+                    return;
+                }
+                
+                if (!confirm(`Are you sure you want to auto-assign ${openTickets.length} open tickets?`)) return;
+
+                const btn = $('autoAssignBtn');
+                btn.disabled = true;
+                let successCount = 0;
+                
+                for (const r of openTickets) {
+                    const success = await window.executeAutomation(r.id, r.agentName, true);
+                    if (success) successCount++;
+                    await sleep(SCAN_PACE_MS || 1200);
+                }
+                
+                btn.disabled = false;
+                toast(`Auto-assigned ${successCount} tickets successfully.`, 'success', 8000);
+                fetchTickets();
+            };
+
             function rowHtml(r) {
                 const p = priorityOf(r.type);
                 const cls = STATUS_CLS[r.status] || 'st-other';
+                const showExecute = r.status === 'Open' && r.agentName;
+                const executeBtn = showExecute ? `<button class="btn btn-outline" style="padding: 4px 8px; font-size: 11px;" onclick="window.executeAutomation(${r.id}, '${escapeHtml(r.agentName).replace(/'/g, "\\'")}')">Assign</button>` : '—';
                 return `<tr>
     <td><a class="ticket-link" href="${ticketUrl(r.id)}" target="_blank" rel="noopener">${r.id}${I.external}</a></td>
     <td class="subj" title="${escapeHtml(r.subject)}">${escapeHtml(r.subject)}</td>
@@ -1882,6 +1959,7 @@
     <td class="nowrap ${r.closedAt ? '' : 'dim'}">${r.closedAt ? fmtDateTime(r.closedAt) : '—'}</td>
     <td class="num dur">${fmtDur(r.overallHrs)}</td>
     <td class="nowrap">${escapeHtml(r.agentName || '—')}</td>
+    <td>${executeBtn}</td>
   </tr>`;
             }
 
